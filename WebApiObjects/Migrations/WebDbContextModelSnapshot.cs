@@ -72,7 +72,7 @@ namespace WebApiObjects.Migrations
             modelBuilder.Entity("WebApiObjects.Models.Property", b =>
                 {
                     b.HasOne("WebApiObjects.Models.Model", "ParentModel")
-                        .WithMany()
+                        .WithMany("Properties")
                         .HasForeignKey("ParentModelID");
 
                     b.Navigation("ParentModel");
@@ -80,6 +80,8 @@ namespace WebApiObjects.Migrations
 
             modelBuilder.Entity("WebApiObjects.Models.Model", b =>
                 {
+                    b.Navigation("Properties");
+
                     b.Navigation("SubModel");
                 });
 #pragma warning restore 612, 618

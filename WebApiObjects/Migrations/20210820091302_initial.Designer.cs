@@ -10,8 +10,8 @@ using WebApiObjects.Models;
 namespace WebApiObjects.Migrations
 {
     [DbContext(typeof(WebDbContext))]
-    [Migration("20210812112602_TableChange")]
-    partial class TableChange
+    [Migration("20210820091302_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -74,7 +74,7 @@ namespace WebApiObjects.Migrations
             modelBuilder.Entity("WebApiObjects.Models.Property", b =>
                 {
                     b.HasOne("WebApiObjects.Models.Model", "ParentModel")
-                        .WithMany()
+                        .WithMany("Properties")
                         .HasForeignKey("ParentModelID");
 
                     b.Navigation("ParentModel");
@@ -82,6 +82,8 @@ namespace WebApiObjects.Migrations
 
             modelBuilder.Entity("WebApiObjects.Models.Model", b =>
                 {
+                    b.Navigation("Properties");
+
                     b.Navigation("SubModel");
                 });
 #pragma warning restore 612, 618

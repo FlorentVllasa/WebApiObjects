@@ -38,8 +38,9 @@ namespace WebApiObjects
                                                     .Select()
                                                     .AddRouteComponents("v", GetEdmModel()));
 
-            services.AddDbContext<WebDbContext>(options => 
-                options.UseSqlServer(Configuration.GetConnectionString("WebDbContext"))
+            services.AddDbContext<WebDbContext>(options =>
+                options.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("WebDbContext"))
+                //.UseLazyLoadingProxies()
             );
 
            

@@ -11,6 +11,7 @@ namespace WebApiObjects.Models
 
         public WebDbContext(DbContextOptions<WebDbContext> options) : base(options)
         {
+            
         }
 
         public DbSet<Model> Models { get; set; }
@@ -18,9 +19,11 @@ namespace WebApiObjects.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
+
             modelBuilder.Entity<Model>()
                 .HasMany(m => m.SubModel);
+                
+            
 
             modelBuilder.Entity<Property>()
                 .HasOne(p => p.ParentModel);

@@ -2,7 +2,7 @@
 
 namespace WebApiObjects.Migrations
 {
-    public partial class Initial : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -13,14 +13,14 @@ namespace WebApiObjects.Migrations
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SubModelID = table.Column<int>(type: "int", nullable: true)
+                    ModelID = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Models", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_Models_Models_SubModelID",
-                        column: x => x.SubModelID,
+                        name: "FK_Models_Models_ModelID",
+                        column: x => x.ModelID,
                         principalTable: "Models",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
@@ -48,9 +48,9 @@ namespace WebApiObjects.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Models_SubModelID",
+                name: "IX_Models_ModelID",
                 table: "Models",
-                column: "SubModelID");
+                column: "ModelID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Properties_ParentModelID",

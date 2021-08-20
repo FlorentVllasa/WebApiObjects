@@ -104,13 +104,12 @@ namespace WebApiObjects.Controllers
             //    .ThenInclude(m => m.Properties);
 
             var pizza = _dbContext.Models
-                .Where(m => m.Name.Equals("pizza"))
-                .Select(m => new Model()
-                {
-                    SubModel = _dbContext.Models.Include(m => m.SubModel).ThenInclude(m => m.Properties).ToList(),
-                    Properties = _dbContext.Properties.Where(p => p.ParentModel.ID == m.ID).ToList()
-
-                });
+                .Where(m => m.Name.Equals("pizza"));
+                //.Select(m => new
+                //{
+                //    SubModel = _dbContext.Models.Include(m => m.SubModel).ThenInclude(m => m.Properties).ToList(),
+                //    Properties = _dbContext.Properties.Where(p => p.ParentModel.ID == m.ID).ToList()
+                //});
 
             return JsonConvert.SerializeObject(pizza, settings);
 
