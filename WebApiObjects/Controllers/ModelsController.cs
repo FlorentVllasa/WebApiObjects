@@ -8,6 +8,7 @@ using WebApiObjects.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
 using Microsoft.AspNetCore.OData.Query;
+using System.Diagnostics;
 
 namespace WebApiObjects.Controllers
 {
@@ -86,7 +87,7 @@ namespace WebApiObjects.Controllers
             _dbContext.SaveChanges();
         }
 
-        public string RetrieveModels()
+        public string RetrieveModels(string model)
         {
             var settings = new JsonSerializerSettings()
             {
@@ -98,21 +99,43 @@ namespace WebApiObjects.Controllers
 
             };
 
-            //var pizza = _dbContext.Models
-            //    .Where(m => m.Name.Equals("pizza"))
-            //    .Include(m => m.SubModel)
-            //    .ThenInclude(m => m.Properties);
 
-            var pizza = _dbContext.Models
-                .Where(m => m.Name.Equals("pizza"));
-                //.Select(m => new
-                //{
-                //    SubModel = _dbContext.Models.Include(m => m.SubModel).ThenInclude(m => m.Properties).ToList(),
-                //    Properties = _dbContext.Properties.Where(p => p.ParentModel.ID == m.ID).ToList()
-                //});
+            //Stopwatch stopwatch = Stopwatch.StartNew();
+
+            
+            //_dbContext.Models.Load();
+
+            //stopwatch.Stop();
+            
+            //Debug.WriteLine(stopwatch.ElapsedMilliseconds);
+            //Debug.WriteLine(_dbContext.Models.Count());
+
+
+            var pizza = _dbContext.Models.Where(m => m.Name.Equals(model));
 
             return JsonConvert.SerializeObject(pizza, settings);
 
+        }
+
+        public void BulkInsert()
+        {
+            List<Model> insertList = new List<Model>();
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            Random random = new Random();
+            for (int i = 0; i < 1000000; i++)
+            {
+
+                string randomString = new string(Enumerable.Repeat(chars, 5)
+                  .Select(s => s[random.Next(s.Length)]).ToArray());
+
+                Model temp = new Model
+                {
+                    Name = randomString,
+                };
+                insertList.Add(temp);
+            }
+
+            _dbContext.Models.BulkInsert(insertList);
         }
 
         [HttpGet]

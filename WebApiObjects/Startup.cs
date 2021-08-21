@@ -78,7 +78,7 @@ namespace WebApiObjects
 
                 endpoints.MapControllerRoute(
                     name: "test2",
-                    pattern: "test/retrieve",
+                    pattern: "test/retrieve/{model}",
                     defaults: new { controller = "Models", action = "retrievemodels" }
                 );
 
