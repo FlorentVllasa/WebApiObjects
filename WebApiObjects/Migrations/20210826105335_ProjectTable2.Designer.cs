@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApiObjects.Models;
 
 namespace WebApiObjects.Migrations
 {
     [DbContext(typeof(WebDbContext))]
-    partial class WebDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210826105335_ProjectTable2")]
+    partial class ProjectTable2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -32,12 +34,17 @@ namespace WebApiObjects.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("ParentProjectID")
+                        .HasColumnType("int");
+
                     b.Property<int?>("ProjectID")
                         .HasColumnType("int");
 
                     b.HasKey("ID");
 
                     b.HasIndex("ModelID");
+
+                    b.HasIndex("ParentProjectID");
 
                     b.HasIndex("ProjectID");
 
@@ -50,9 +57,6 @@ namespace WebApiObjects.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 
@@ -93,9 +97,15 @@ namespace WebApiObjects.Migrations
                         .WithMany("SubModel")
                         .HasForeignKey("ModelID");
 
+                    b.HasOne("WebApiObjects.Models.Project", "ParentProject")
+                        .WithMany()
+                        .HasForeignKey("ParentProjectID");
+
                     b.HasOne("WebApiObjects.Models.Project", null)
                         .WithMany("Models")
                         .HasForeignKey("ProjectID");
+
+                    b.Navigation("ParentProject");
                 });
 
             modelBuilder.Entity("WebApiObjects.Models.Property", b =>

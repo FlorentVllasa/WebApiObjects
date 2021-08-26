@@ -25,12 +25,22 @@ namespace WebApiObjects
         {
             Configuration = configuration;
         }
-
+        readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: MyAllowSpecificOrigins,
+                                  builder =>
+                                  {
+                                      builder.WithOrigins("http://localhost:8080").AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
+                                  });
+            });
+
             services.AddControllers().AddOData(opt => opt.Count()
                                                     .Filter()
                                                     .OrderBy()
@@ -39,7 +49,7 @@ namespace WebApiObjects
                                                     .AddRouteComponents("v", GetEdmModel()));
 
             services.AddDbContext<WebDbContext>(options =>
-                options.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("WebDbContext"))
+                options.UseSqlServer(Configuration.GetConnectionString("WebDbContext"))
                 //.UseLazyLoadingProxies()
             );
 
@@ -74,6 +84,12 @@ namespace WebApiObjects
                     name: "test",
                     pattern: "test/data",
                     defaults: new { controller = "Models", action = "addsampledata" }
+                );
+
+                endpoints.MapControllerRoute(
+                    name: "test",
+                    pattern: "test/data/CreateProject",
+                    defaults: new { controller = "Models", action = "createproject" }
                 );
 
                 endpoints.MapControllerRoute(

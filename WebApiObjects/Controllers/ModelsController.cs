@@ -18,7 +18,6 @@ namespace WebApiObjects.Controllers
         public ModelsController(WebDbContext context)
         {
             _dbContext = context;
-
         }
 
         public string SayHello()
@@ -80,11 +79,36 @@ namespace WebApiObjects.Controllers
                 SubModel = Ingredients
             };
 
+            List<Model> AllModels = new List<Model>();
+            AllModels.Add(Pizza);
+            AllModels.Add(Salami);
+            AllModels.Add(Cheese);
+            AllModels.Add(CheeseOrigin);
+            AllModels.Add(CheeseShape);
+
+            Project TestProject = new Project
+            {
+                Name = "TestProject",
+                Models = AllModels
+            };
+
+            //foreach (Model model in AllModels)
+            //{
+            //    model.ParentProject = TestProject;
+            //}
+
+            _dbContext.Add(TestProject);
             _dbContext.Add(Pizza);
             _dbContext.Add(Salami);
             _dbContext.Add(SalamiMeat);
             _dbContext.Add(Cheese);
             _dbContext.SaveChanges();
+        }
+
+        public string CreateProject(string data)
+        {
+            Debug.WriteLine(data);
+            return "Ok";
         }
 
         public string RetrieveModels(string model)
@@ -99,21 +123,11 @@ namespace WebApiObjects.Controllers
 
             };
 
+            var project = _dbContext.Projects.Where(m => m.Name.Equals(model)).Include(p => p.Models).ThenInclude(m => m.Properties);
+            return JsonConvert.SerializeObject(project, settings);
 
-            //Stopwatch stopwatch = Stopwatch.StartNew();
-
-            
-            //_dbContext.Models.Load();
-
-            //stopwatch.Stop();
-            
-            //Debug.WriteLine(stopwatch.ElapsedMilliseconds);
-            //Debug.WriteLine(_dbContext.Models.Count());
-
-
-            var pizza = _dbContext.Models.Where(m => m.Name.Equals(model));
-
-            return JsonConvert.SerializeObject(pizza, settings);
+            //var pizza = _dbContext.Models.Where(m => m.Name.Equals(model));
+            //return JsonConvert.SerializeObject(pizza, settings);
 
         }
 

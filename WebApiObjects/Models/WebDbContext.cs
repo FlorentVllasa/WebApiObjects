@@ -16,17 +16,25 @@ namespace WebApiObjects.Models
 
         public DbSet<Model> Models { get; set; }
         public DbSet<Property> Properties { get; set; }
+        public DbSet<Project> Projects { get; set; }
+
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
             modelBuilder.Entity<Model>()
-                .HasMany(m => m.SubModel);
-                
-            
-
+                .HasMany(m => m.SubModel)
+                .WithOne();
+                                
             modelBuilder.Entity<Property>()
-                .HasOne(p => p.ParentModel);
+                .HasOne(p => p.ParentModel)
+                .WithMany();
+
+            modelBuilder.Entity<Project>()
+                .HasMany(p => p.Models)
+                .WithOne();
+                
                 
         }
     }
