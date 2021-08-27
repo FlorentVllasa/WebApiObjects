@@ -32,15 +32,15 @@ namespace WebApiObjects
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddCors(options =>
-            {
-                options.AddPolicy(name: MyAllowSpecificOrigins,
-                                  builder =>
-                                  {
-                                      builder.WithOrigins("http://localhost:8080").AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
-                                  });
-            });
-
+            //services.AddCors(options =>
+            //{
+            //    options.AddPolicy(name: MyAllowSpecificOrigins,
+            //                      builder =>
+            //                      {
+            //                          builder.WithOrigins("http://localhost:8080").AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
+            //                      });
+            //});
+            services.AddCors();
             services.AddControllers().AddOData(opt => opt.Count()
                                                     .Filter()
                                                     .OrderBy()
@@ -64,6 +64,10 @@ namespace WebApiObjects
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseCors(
+                options => options.WithOrigins("http://localhost:8080").AllowAnyMethod()
+            );
 
             app.UseHttpsRedirection();
 
@@ -104,7 +108,7 @@ namespace WebApiObjects
         private static IEdmModel GetEdmModel()
         {
             var builder = new ODataConventionModelBuilder();
-            builder.EntitySet<Model>("Models").EntityType.HasMany(m => m.SubModel);
+            builder.EntitySet<Model>("Models").EntityType.HasMany(m => m.SubModels);
             builder.EntitySet<Property>("Propterties");//.EntityType.HasKey(prop => prop.ParentModel);
             return builder.GetEdmModel();
         }

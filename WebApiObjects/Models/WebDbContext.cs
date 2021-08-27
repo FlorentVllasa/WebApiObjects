@@ -24,7 +24,7 @@ namespace WebApiObjects.Models
         {
 
             modelBuilder.Entity<Model>()
-                .HasMany(m => m.SubModel)
+                .HasMany(m => m.SubModels)
                 .WithOne();
                                 
             modelBuilder.Entity<Property>()

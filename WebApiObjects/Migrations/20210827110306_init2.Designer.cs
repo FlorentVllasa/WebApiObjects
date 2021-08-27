@@ -10,8 +10,8 @@ using WebApiObjects.Models;
 namespace WebApiObjects.Migrations
 {
     [DbContext(typeof(WebDbContext))]
-    [Migration("20210826104956_ProjectTable")]
-    partial class ProjectTable
+    [Migration("20210827110306_init2")]
+    partial class init2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -34,7 +34,7 @@ namespace WebApiObjects.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ParentProjectID")
+                    b.Property<int?>("ParentModelID")
                         .HasColumnType("int");
 
                     b.Property<int?>("ProjectID")
@@ -44,7 +44,7 @@ namespace WebApiObjects.Migrations
 
                     b.HasIndex("ModelID");
 
-                    b.HasIndex("ParentProjectID");
+                    b.HasIndex("ParentModelID");
 
                     b.HasIndex("ProjectID");
 
@@ -58,9 +58,12 @@ namespace WebApiObjects.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("ID");
 
-                    b.ToTable("Project");
+                    b.ToTable("Projects");
                 });
 
             modelBuilder.Entity("WebApiObjects.Models.Property", b =>
@@ -94,18 +97,18 @@ namespace WebApiObjects.Migrations
             modelBuilder.Entity("WebApiObjects.Models.Model", b =>
                 {
                     b.HasOne("WebApiObjects.Models.Model", null)
-                        .WithMany("SubModel")
+                        .WithMany("SubModels")
                         .HasForeignKey("ModelID");
 
-                    b.HasOne("WebApiObjects.Models.Project", "ParentProject")
+                    b.HasOne("WebApiObjects.Models.Model", "ParentModel")
                         .WithMany()
-                        .HasForeignKey("ParentProjectID");
+                        .HasForeignKey("ParentModelID");
 
                     b.HasOne("WebApiObjects.Models.Project", null)
                         .WithMany("Models")
                         .HasForeignKey("ProjectID");
 
-                    b.Navigation("ParentProject");
+                    b.Navigation("ParentModel");
                 });
 
             modelBuilder.Entity("WebApiObjects.Models.Property", b =>
@@ -125,7 +128,7 @@ namespace WebApiObjects.Migrations
                 {
                     b.Navigation("Properties");
 
-                    b.Navigation("SubModel");
+                    b.Navigation("SubModels");
                 });
 
             modelBuilder.Entity("WebApiObjects.Models.Project", b =>

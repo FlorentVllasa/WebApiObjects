@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
 using Microsoft.AspNetCore.OData.Query;
 using System.Diagnostics;
+using System.Linq.Expressions;
 
 namespace WebApiObjects.Controllers
 {
@@ -25,6 +26,24 @@ namespace WebApiObjects.Controllers
             return "Hello";
         }
 
+        public static Expression<Func<Model, ModelConcret>> GetModelProjection(int maxDepth, int currentDepth = 0)
+        {
+            currentDepth++;
+
+            Expression<Func<Model, ModelConcret>> result = model => new ModelConcret()
+            {
+                //ID = model.ID,
+                //Name = model.Name,
+                //SubModels = currentDepth == maxDepth
+                //    ? new List<ModelConcret>()
+                //    : model.SubModels.AsQueryable()
+                //    .Select(GetModelProjection(maxDepth, currentDepth)).ToList()
+            };
+
+            return result;
+
+        }
+
         public void AddSampleData()
         {
 
@@ -34,14 +53,13 @@ namespace WebApiObjects.Controllers
             Model Salami = new Model
             {
                 Name = "Salami",
-                SubModel = null,
+                SubModels = null,
                 Properties = properties
             };
 
             Property SalamiMeat = new Property
             {
                 Name = "Salami Meat",
-                ParentModel = Salami
             };
 
             properties.Add(SalamiMeat);
@@ -51,19 +69,19 @@ namespace WebApiObjects.Controllers
             Model Cheese = new Model
             {
                 Name = "Cheese",
-                SubModel = CheeseModels
+                SubModels = CheeseModels
             };
 
             Model CheeseShape = new Model
             {
                 Name = "CheeseShape",
-                SubModel = null
+                SubModels = null
             };
 
             Model CheeseOrigin = new Model
             {
                 Name = "CheeseOrigin",
-                SubModel = null
+                SubModels = null
             };
 
             CheeseModels.Add(CheeseShape);
@@ -76,7 +94,7 @@ namespace WebApiObjects.Controllers
             Model Pizza = new Model
             {
                 Name = "pizza",
-                SubModel = Ingredients
+                SubModels = Ingredients
             };
 
             List<Model> AllModels = new List<Model>();
@@ -92,22 +110,18 @@ namespace WebApiObjects.Controllers
                 Models = AllModels
             };
 
-            //foreach (Model model in AllModels)
-            //{
-            //    model.ParentProject = TestProject;
-            //}
-
             _dbContext.Add(TestProject);
-            _dbContext.Add(Pizza);
-            _dbContext.Add(Salami);
-            _dbContext.Add(SalamiMeat);
-            _dbContext.Add(Cheese);
+            //_dbContext.Add(Pizza);
+            //_dbContext.Add(Salami);
+            //_dbContext.Add(SalamiMeat);
+            //_dbContext.Add(Cheese);
             _dbContext.SaveChanges();
         }
 
-        public string CreateProject(string data)
+        [HttpPost]
+        public string CreateProject([FromBody] Project data)
         {
-            Debug.WriteLine(data);
+            Debug.WriteLine(data.Name);
             return "Ok";
         }
 
@@ -123,12 +137,27 @@ namespace WebApiObjects.Controllers
 
             };
 
-            var project = _dbContext.Projects.Where(m => m.Name.Equals(model)).Include(p => p.Models).ThenInclude(m => m.Properties);
-            return JsonConvert.SerializeObject(project, settings);
+            //var project = _dbContext.Projects.Include(p => p.Models).ThenInclude(m => m.Properties);
+            //return JsonConvert.SerializeObject(project, settings);
 
-            //var pizza = _dbContext.Models.Where(m => m.Name.Equals(model));
-            //return JsonConvert.SerializeObject(pizza, settings);
+            var pizza = _dbContext.Models.Where(m => m.Name.Equals(model)).First();
+            LoadRecursively(pizza);
 
+            return JsonConvert.SerializeObject(pizza, settings);
+
+        }
+
+        public void LoadRecursively(Model model)
+        {
+            _dbContext.Entry(model).Collection(m => m.SubModels).Load();
+            _dbContext.Entry(model).Collection(m => m.Properties).Load();
+            
+            foreach (var SubModel in model.SubModels)
+            {
+                _dbContext.Entry(SubModel).Collection(m => m.Properties).Load();
+                LoadRecursively(SubModel);
+            }
+                       
         }
 
         public void BulkInsert()

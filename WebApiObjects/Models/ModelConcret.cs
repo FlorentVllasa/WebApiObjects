@@ -1,21 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
 namespace WebApiObjects.Models
 {
-    public class Model
+    public class ModelConcret
     {
-        [Key]
         public int ID { get; set; }
         public string Name { get; set; }
         public List<Model> SubModels { get; set; }
-        public Model ParentModel { get; set; }
         public List<Property> Properties { get; set; }
-
 
     }
 }

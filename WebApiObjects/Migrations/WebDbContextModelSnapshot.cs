@@ -32,12 +32,17 @@ namespace WebApiObjects.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("ParentModelID")
+                        .HasColumnType("int");
+
                     b.Property<int?>("ProjectID")
                         .HasColumnType("int");
 
                     b.HasKey("ID");
 
                     b.HasIndex("ModelID");
+
+                    b.HasIndex("ParentModelID");
 
                     b.HasIndex("ProjectID");
 
@@ -90,12 +95,18 @@ namespace WebApiObjects.Migrations
             modelBuilder.Entity("WebApiObjects.Models.Model", b =>
                 {
                     b.HasOne("WebApiObjects.Models.Model", null)
-                        .WithMany("SubModel")
+                        .WithMany("SubModels")
                         .HasForeignKey("ModelID");
+
+                    b.HasOne("WebApiObjects.Models.Model", "ParentModel")
+                        .WithMany()
+                        .HasForeignKey("ParentModelID");
 
                     b.HasOne("WebApiObjects.Models.Project", null)
                         .WithMany("Models")
                         .HasForeignKey("ProjectID");
+
+                    b.Navigation("ParentModel");
                 });
 
             modelBuilder.Entity("WebApiObjects.Models.Property", b =>
@@ -115,7 +126,7 @@ namespace WebApiObjects.Migrations
                 {
                     b.Navigation("Properties");
 
-                    b.Navigation("SubModel");
+                    b.Navigation("SubModels");
                 });
 
             modelBuilder.Entity("WebApiObjects.Models.Project", b =>

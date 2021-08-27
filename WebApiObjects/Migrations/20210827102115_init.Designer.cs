@@ -10,8 +10,8 @@ using WebApiObjects.Models;
 namespace WebApiObjects.Migrations
 {
     [DbContext(typeof(WebDbContext))]
-    [Migration("20210826105540_ProjectTable3")]
-    partial class ProjectTable3
+    [Migration("20210827102115_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -34,17 +34,12 @@ namespace WebApiObjects.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ParentProjectID")
-                        .HasColumnType("int");
-
                     b.Property<int?>("ProjectID")
                         .HasColumnType("int");
 
                     b.HasKey("ID");
 
                     b.HasIndex("ModelID");
-
-                    b.HasIndex("ParentProjectID");
 
                     b.HasIndex("ProjectID");
 
@@ -97,18 +92,12 @@ namespace WebApiObjects.Migrations
             modelBuilder.Entity("WebApiObjects.Models.Model", b =>
                 {
                     b.HasOne("WebApiObjects.Models.Model", null)
-                        .WithMany("SubModel")
+                        .WithMany("SubModels")
                         .HasForeignKey("ModelID");
-
-                    b.HasOne("WebApiObjects.Models.Project", "ParentProject")
-                        .WithMany()
-                        .HasForeignKey("ParentProjectID");
 
                     b.HasOne("WebApiObjects.Models.Project", null)
                         .WithMany("Models")
                         .HasForeignKey("ProjectID");
-
-                    b.Navigation("ParentProject");
                 });
 
             modelBuilder.Entity("WebApiObjects.Models.Property", b =>
@@ -128,7 +117,7 @@ namespace WebApiObjects.Migrations
                 {
                     b.Navigation("Properties");
 
-                    b.Navigation("SubModel");
+                    b.Navigation("SubModels");
                 });
 
             modelBuilder.Entity("WebApiObjects.Models.Project", b =>
