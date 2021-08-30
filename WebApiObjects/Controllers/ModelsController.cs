@@ -26,24 +26,6 @@ namespace WebApiObjects.Controllers
             return "Hello";
         }
 
-        public static Expression<Func<Model, ModelConcret>> GetModelProjection(int maxDepth, int currentDepth = 0)
-        {
-            currentDepth++;
-
-            Expression<Func<Model, ModelConcret>> result = model => new ModelConcret()
-            {
-                //ID = model.ID,
-                //Name = model.Name,
-                //SubModels = currentDepth == maxDepth
-                //    ? new List<ModelConcret>()
-                //    : model.SubModels.AsQueryable()
-                //    .Select(GetModelProjection(maxDepth, currentDepth)).ToList()
-            };
-
-            return result;
-
-        }
-
         public void AddSampleData()
         {
 
@@ -116,13 +98,6 @@ namespace WebApiObjects.Controllers
             //_dbContext.Add(SalamiMeat);
             //_dbContext.Add(Cheese);
             _dbContext.SaveChanges();
-        }
-
-        [HttpPost]
-        public string CreateProject([FromBody] Project data)
-        {
-            Debug.WriteLine(data.Name);
-            return "Ok";
         }
 
         public string RetrieveModels(string model)

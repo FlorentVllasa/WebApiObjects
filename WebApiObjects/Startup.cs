@@ -32,14 +32,15 @@ namespace WebApiObjects
         public void ConfigureServices(IServiceCollection services)
         {
 
-            //services.AddCors(options =>
-            //{
-            //    options.AddPolicy(name: MyAllowSpecificOrigins,
-            //                      builder =>
-            //                      {
-            //                          builder.WithOrigins("http://localhost:8080").AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
-            //                      });
-            //});
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: MyAllowSpecificOrigins,
+                                  builder =>
+                                  {
+                                      builder.WithOrigins("http://localhost:8080").AllowAnyMethod().AllowAnyHeader();
+                                  });
+            });
+
             services.AddCors();
             services.AddControllers().AddOData(opt => opt.Count()
                                                     .Filter()
@@ -65,13 +66,11 @@ namespace WebApiObjects
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseCors(
-                options => options.WithOrigins("http://localhost:8080").AllowAnyMethod()
-            );
-
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors(MyAllowSpecificOrigins);
 
             app.UseAuthorization();
 
@@ -91,9 +90,15 @@ namespace WebApiObjects
                 );
 
                 endpoints.MapControllerRoute(
-                    name: "test",
-                    pattern: "test/data/CreateProject",
-                    defaults: new { controller = "Models", action = "createproject" }
+                    name: "projects",
+                    pattern: "projects/create",
+                    defaults: new { controller = "Projects", action = "createproject" }
+                );
+
+                endpoints.MapControllerRoute(
+                    name: "projects",
+                    pattern: "projects",
+                    defaults: new { controller = "Projects", action = "get" }
                 );
 
                 endpoints.MapControllerRoute(
