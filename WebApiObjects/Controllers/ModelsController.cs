@@ -119,7 +119,6 @@ namespace WebApiObjects.Controllers
             LoadRecursively(pizza);
 
             return JsonConvert.SerializeObject(pizza, settings);
-
         }
 
         public void LoadRecursively(Model model)
@@ -131,8 +130,7 @@ namespace WebApiObjects.Controllers
             {
                 _dbContext.Entry(SubModel).Collection(m => m.Properties).Load();
                 LoadRecursively(SubModel);
-            }
-                       
+            }                      
         }
 
         public void BulkInsert()
