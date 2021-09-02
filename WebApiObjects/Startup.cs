@@ -102,8 +102,20 @@ namespace WebApiObjects
                 );
 
                 endpoints.MapControllerRoute(
-                    name: "test2",
-                    pattern: "test/retrieve/{model}",
+                    name: "models",
+                    pattern: "models",
+                    defaults: new { controller = "Models", action = "get" }
+                );
+
+                endpoints.MapControllerRoute(
+                    name: "models",
+                    pattern: "models/create",
+                    defaults: new { controller = "Models", action = "createmodel" }
+                );
+
+                endpoints.MapControllerRoute(
+                    name: "models",
+                    pattern: "models/retrieve/{model}",
                     defaults: new { controller = "Models", action = "retrievemodels" }
                 );
 

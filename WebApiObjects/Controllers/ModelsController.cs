@@ -120,6 +120,31 @@ namespace WebApiObjects.Controllers
 
             return JsonConvert.SerializeObject(pizza, settings);
         }
+        
+        public string CreateModel(int ProjectId, string ModelName)
+        {
+            var ToAddProject = _dbContext.Projects.Where(p => p.ID == ProjectId).First();
+
+            Model NewModel = new Model()
+            {
+                Name = ModelName
+            };
+
+            if (ToAddProject != null)
+            {
+                ToAddProject.Models.Add(NewModel);
+            }
+
+            _dbContext.SaveChanges();
+
+            return JsonConvert.SerializeObject(NewModel);
+        }
+
+        public string Get()
+        {
+            var AllModels = _dbContext.Models.ToList();
+            return JsonConvert.SerializeObject(AllModels);
+        }
 
         public void LoadRecursively(Model model)
         {
@@ -154,12 +179,12 @@ namespace WebApiObjects.Controllers
             _dbContext.Models.BulkInsert(insertList);
         }
 
-        [HttpGet]
-        [EnableQuery]
-        public IEnumerable<Model> Get()
-        {
-            return _dbContext.Models;//.Where(m => m.ID == key).Include(m => m.SubModel);
-        }
+        //[HttpGet]
+        //[EnableQuery]
+        //public IEnumerable<Model> Get()
+        //{
+        //    return _dbContext.Models;//.Where(m => m.ID == key).Include(m => m.SubModel);
+        //}
 
     }
 }
