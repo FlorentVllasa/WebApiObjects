@@ -10,7 +10,7 @@ using WebApiObjects.Models;
 namespace WebApiObjects.Migrations
 {
     [DbContext(typeof(WebDbContext))]
-    [Migration("20210827102115_init")]
+    [Migration("20210906134158_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,14 +34,19 @@ namespace WebApiObjects.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ProjectID")
+                    b.Property<int?>("ParentModelID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ProjectIdID")
                         .HasColumnType("int");
 
                     b.HasKey("ID");
 
                     b.HasIndex("ModelID");
 
-                    b.HasIndex("ProjectID");
+                    b.HasIndex("ParentModelID");
+
+                    b.HasIndex("ProjectIdID");
 
                     b.ToTable("Models");
                 });
@@ -95,9 +100,17 @@ namespace WebApiObjects.Migrations
                         .WithMany("SubModels")
                         .HasForeignKey("ModelID");
 
-                    b.HasOne("WebApiObjects.Models.Project", null)
-                        .WithMany("Models")
-                        .HasForeignKey("ProjectID");
+                    b.HasOne("WebApiObjects.Models.Model", "ParentModel")
+                        .WithMany()
+                        .HasForeignKey("ParentModelID");
+
+                    b.HasOne("WebApiObjects.Models.Project", "ProjectId")
+                        .WithMany()
+                        .HasForeignKey("ProjectIdID");
+
+                    b.Navigation("ParentModel");
+
+                    b.Navigation("ProjectId");
                 });
 
             modelBuilder.Entity("WebApiObjects.Models.Property", b =>
@@ -118,11 +131,6 @@ namespace WebApiObjects.Migrations
                     b.Navigation("Properties");
 
                     b.Navigation("SubModels");
-                });
-
-            modelBuilder.Entity("WebApiObjects.Models.Project", b =>
-                {
-                    b.Navigation("Models");
                 });
 #pragma warning restore 612, 618
         }

@@ -14,6 +14,7 @@ namespace WebApiObjects.Models
         public string Name { get; set; }
         public List<Model> SubModels { get; set; }
         public Model ParentModel { get; set; }
+        public Project ProjectId { get; set; }
         public List<Property> Properties { get; set; }
 
 

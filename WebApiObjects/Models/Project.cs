@@ -11,6 +11,6 @@ namespace WebApiObjects.Models
         [Key]
         public int ID { get; set; }
         public string Name { get; set; }
-        public virtual ICollection<Model> Models { get; set; }
+        //public ICollection<Model> Models { get; set; }
     }
 }

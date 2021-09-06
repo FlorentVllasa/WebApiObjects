@@ -31,9 +31,8 @@ namespace WebApiObjects.Models
                 .HasOne(p => p.ParentModel)
                 .WithMany();
 
-            modelBuilder.Entity<Project>()
-                .HasMany(p => p.Models)
-                .WithOne();
+            modelBuilder.Entity<Project>();
+                
                 
                 
         }

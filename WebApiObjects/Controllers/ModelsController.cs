@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.OData.Routing.Controllers;
 using Microsoft.AspNetCore.OData.Query;
 using System.Diagnostics;
 using System.Linq.Expressions;
+using WebApiObjects.HelperModels;
 
 namespace WebApiObjects.Controllers
 {
@@ -30,13 +31,19 @@ namespace WebApiObjects.Controllers
         {
 
             List<Property> properties = new List<Property>();
-            
+
+            Project TestProject = new Project
+            {
+                Name = "TestProject",
+                //Models = AllModels
+            };
 
             Model Salami = new Model
             {
                 Name = "Salami",
                 SubModels = null,
-                Properties = properties
+                Properties = properties,
+                ProjectId = TestProject
             };
 
             Property SalamiMeat = new Property
@@ -51,19 +58,22 @@ namespace WebApiObjects.Controllers
             Model Cheese = new Model
             {
                 Name = "Cheese",
-                SubModels = CheeseModels
+                SubModels = CheeseModels,
+                ProjectId = TestProject
             };
 
             Model CheeseShape = new Model
             {
                 Name = "CheeseShape",
-                SubModels = null
+                SubModels = null,
+                ProjectId = TestProject
             };
 
             Model CheeseOrigin = new Model
             {
                 Name = "CheeseOrigin",
-                SubModels = null
+                SubModels = null,
+                ProjectId = TestProject
             };
 
             CheeseModels.Add(CheeseShape);
@@ -76,7 +86,8 @@ namespace WebApiObjects.Controllers
             Model Pizza = new Model
             {
                 Name = "pizza",
-                SubModels = Ingredients
+                SubModels = Ingredients,
+                ProjectId = TestProject
             };
 
             List<Model> AllModels = new List<Model>();
@@ -86,17 +97,11 @@ namespace WebApiObjects.Controllers
             AllModels.Add(CheeseOrigin);
             AllModels.Add(CheeseShape);
 
-            Project TestProject = new Project
-            {
-                Name = "TestProject",
-                Models = AllModels
-            };
-
             _dbContext.Add(TestProject);
-            //_dbContext.Add(Pizza);
-            //_dbContext.Add(Salami);
-            //_dbContext.Add(SalamiMeat);
-            //_dbContext.Add(Cheese);
+            _dbContext.Add(Pizza);
+            _dbContext.Add(Salami);
+            _dbContext.Add(SalamiMeat);
+            _dbContext.Add(Cheese);
             _dbContext.SaveChanges();
         }
 
@@ -121,20 +126,21 @@ namespace WebApiObjects.Controllers
             return JsonConvert.SerializeObject(pizza, settings);
         }
         
-        public string CreateModel(int ProjectId, string ModelName)
+        public string CreateModel([FromBody] CreateModelData modelData)
         {
-            var ToAddProject = _dbContext.Projects.Where(p => p.ID == ProjectId).First();
+            var ToAddProject = _dbContext.Projects.Where(p => p.ID == modelData.ProjectId).First();
 
             Model NewModel = new Model()
             {
-                Name = ModelName
+                Name = modelData.ModelName,
+                ProjectId = ToAddProject
             };
 
-            if (ToAddProject != null)
-            {
-                ToAddProject.Models.Add(NewModel);
-            }
-
+            //if (ToAddProject != null)
+            //{
+            //    ToAddProject.Models.Add(NewModel);
+            //}
+            _dbContext.Models.Add(NewModel);
             _dbContext.SaveChanges();
 
             return JsonConvert.SerializeObject(NewModel);
@@ -150,10 +156,12 @@ namespace WebApiObjects.Controllers
         {
             _dbContext.Entry(model).Collection(m => m.SubModels).Load();
             _dbContext.Entry(model).Collection(m => m.Properties).Load();
+            _dbContext.Entry(model).Reference(m => m.ProjectId).Load();
             
             foreach (var SubModel in model.SubModels)
             {
                 _dbContext.Entry(SubModel).Collection(m => m.Properties).Load();
+                _dbContext.Entry(model).Reference(m => m.ProjectId).Load();
                 LoadRecursively(SubModel);
             }                      
         }

@@ -35,7 +35,7 @@ namespace WebApiObjects.Migrations
                     b.Property<int?>("ParentModelID")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ProjectID")
+                    b.Property<int?>("ProjectIdID")
                         .HasColumnType("int");
 
                     b.HasKey("ID");
@@ -44,7 +44,7 @@ namespace WebApiObjects.Migrations
 
                     b.HasIndex("ParentModelID");
 
-                    b.HasIndex("ProjectID");
+                    b.HasIndex("ProjectIdID");
 
                     b.ToTable("Models");
                 });
@@ -102,11 +102,13 @@ namespace WebApiObjects.Migrations
                         .WithMany()
                         .HasForeignKey("ParentModelID");
 
-                    b.HasOne("WebApiObjects.Models.Project", null)
-                        .WithMany("Models")
-                        .HasForeignKey("ProjectID");
+                    b.HasOne("WebApiObjects.Models.Project", "ProjectId")
+                        .WithMany()
+                        .HasForeignKey("ProjectIdID");
 
                     b.Navigation("ParentModel");
+
+                    b.Navigation("ProjectId");
                 });
 
             modelBuilder.Entity("WebApiObjects.Models.Property", b =>
@@ -127,11 +129,6 @@ namespace WebApiObjects.Migrations
                     b.Navigation("Properties");
 
                     b.Navigation("SubModels");
-                });
-
-            modelBuilder.Entity("WebApiObjects.Models.Project", b =>
-                {
-                    b.Navigation("Models");
                 });
 #pragma warning restore 612, 618
         }

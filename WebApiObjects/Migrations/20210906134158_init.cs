@@ -26,8 +26,9 @@ namespace WebApiObjects.Migrations
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ModelID = table.Column<int>(type: "int", nullable: true),
-                    ProjectID = table.Column<int>(type: "int", nullable: true)
+                    ParentModelID = table.Column<int>(type: "int", nullable: true),
+                    ProjectIdID = table.Column<int>(type: "int", nullable: true),
+                    ModelID = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -39,8 +40,14 @@ namespace WebApiObjects.Migrations
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Models_Projects_ProjectID",
-                        column: x => x.ProjectID,
+                        name: "FK_Models_Models_ParentModelID",
+                        column: x => x.ParentModelID,
+                        principalTable: "Models",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Models_Projects_ProjectIdID",
+                        column: x => x.ProjectIdID,
                         principalTable: "Projects",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
@@ -80,9 +87,14 @@ namespace WebApiObjects.Migrations
                 column: "ModelID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Models_ProjectID",
+                name: "IX_Models_ParentModelID",
                 table: "Models",
-                column: "ProjectID");
+                column: "ParentModelID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Models_ProjectIdID",
+                table: "Models",
+                column: "ProjectIdID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Properties_ModelID",
