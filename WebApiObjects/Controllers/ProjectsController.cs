@@ -20,7 +20,7 @@ namespace WebApiObjects.Controllers
         }
 
         [HttpGet]
-        public string Get()
+        public string GetProjects()
         {
             List<Project> AllProjects = _dbContext.Projects.ToList();
             return JsonConvert.SerializeObject(AllProjects);

@@ -77,11 +77,6 @@ namespace WebApiObjects
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapControllerRoute(
-                    name: "test",
-                    pattern: "test",
-                    defaults: new { controller = "Models", action = "sayhello" }
-                );
 
                 endpoints.MapControllerRoute(
                     name: "test",
@@ -98,13 +93,13 @@ namespace WebApiObjects
                 endpoints.MapControllerRoute(
                     name: "projects",
                     pattern: "projects",
-                    defaults: new { controller = "Projects", action = "get" }
+                    defaults: new { controller = "Projects", action = "getprojects" }
                 );
 
                 endpoints.MapControllerRoute(
                     name: "models",
                     pattern: "models",
-                    defaults: new { controller = "Models", action = "get" }
+                    defaults: new { controller = "Models", action = "get2" }
                 );
 
                 endpoints.MapControllerRoute(

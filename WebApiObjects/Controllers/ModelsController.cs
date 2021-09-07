@@ -22,6 +22,18 @@ namespace WebApiObjects.Controllers
             _dbContext = context;
         }
 
+        [HttpGet]
+        public string Get2()
+        {
+            var AllModels = _dbContext.Models.ToList();
+
+            foreach(Model model in AllModels)
+            {
+                LoadRecursively(model);
+            }
+            return JsonConvert.SerializeObject(AllModels);
+        }
+
         public string SayHello()
         {
             return "Hello";
@@ -97,6 +109,12 @@ namespace WebApiObjects.Controllers
             AllModels.Add(CheeseOrigin);
             AllModels.Add(CheeseShape);
 
+            //Pizza.ParentModel = null;
+            //Salami.ParentModel = Pizza;
+            //Cheese.ParentModel = Pizza;
+            //CheeseOrigin.ParentModel = Cheese;
+            //CheeseShape.ParentModel = Cheese;
+
             _dbContext.Add(TestProject);
             _dbContext.Add(Pizza);
             _dbContext.Add(Salami);
@@ -146,22 +164,18 @@ namespace WebApiObjects.Controllers
             return JsonConvert.SerializeObject(NewModel);
         }
 
-        public string Get()
-        {
-            var AllModels = _dbContext.Models.ToList();
-            return JsonConvert.SerializeObject(AllModels);
-        }
-
         public void LoadRecursively(Model model)
         {
             _dbContext.Entry(model).Collection(m => m.SubModels).Load();
             _dbContext.Entry(model).Collection(m => m.Properties).Load();
             _dbContext.Entry(model).Reference(m => m.ProjectId).Load();
+            //_dbContext.Entry(model).Reference(m => m.ParentModel).Load();
             
             foreach (var SubModel in model.SubModels)
             {
                 _dbContext.Entry(SubModel).Collection(m => m.Properties).Load();
                 _dbContext.Entry(model).Reference(m => m.ProjectId).Load();
+                //_dbContext.Entry(model).Reference(m => m.ParentModel).Load();
                 LoadRecursively(SubModel);
             }                      
         }
