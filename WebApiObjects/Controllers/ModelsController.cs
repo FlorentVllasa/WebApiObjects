@@ -23,20 +23,21 @@ namespace WebApiObjects.Controllers
         }
 
         [HttpGet]
-        public string Get2()
+        public string GetModels()
         {
             var AllModels = _dbContext.Models.ToList();
 
-            foreach(Model model in AllModels)
+            foreach (Model model in AllModels)
             {
                 LoadRecursively(model);
             }
-            return JsonConvert.SerializeObject(AllModels);
-        }
 
-        public string SayHello()
-        {
-            return "Hello";
+            var JsonSettings = new JsonSerializerSettings()
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            };
+
+            return JsonConvert.SerializeObject(AllModels, JsonSettings);
         }
 
         public void AddSampleData()
@@ -109,11 +110,11 @@ namespace WebApiObjects.Controllers
             AllModels.Add(CheeseOrigin);
             AllModels.Add(CheeseShape);
 
-            //Pizza.ParentModel = null;
-            //Salami.ParentModel = Pizza;
-            //Cheese.ParentModel = Pizza;
-            //CheeseOrigin.ParentModel = Cheese;
-            //CheeseShape.ParentModel = Cheese;
+            Pizza.ParentModel = null;
+            Salami.ParentModel = Pizza;
+            Cheese.ParentModel = Pizza;
+            CheeseOrigin.ParentModel = Cheese;
+            CheeseShape.ParentModel = Cheese;
 
             _dbContext.Add(TestProject);
             _dbContext.Add(Pizza);
@@ -143,7 +144,7 @@ namespace WebApiObjects.Controllers
 
             return JsonConvert.SerializeObject(pizza, settings);
         }
-        
+
         public string CreateModel([FromBody] CreateModelData modelData)
         {
             var ToAddProject = _dbContext.Projects.Where(p => p.ID == modelData.ProjectId).First();
@@ -170,14 +171,14 @@ namespace WebApiObjects.Controllers
             _dbContext.Entry(model).Collection(m => m.Properties).Load();
             _dbContext.Entry(model).Reference(m => m.ProjectId).Load();
             //_dbContext.Entry(model).Reference(m => m.ParentModel).Load();
-            
+
             foreach (var SubModel in model.SubModels)
             {
                 _dbContext.Entry(SubModel).Collection(m => m.Properties).Load();
                 _dbContext.Entry(model).Reference(m => m.ProjectId).Load();
                 //_dbContext.Entry(model).Reference(m => m.ParentModel).Load();
                 LoadRecursively(SubModel);
-            }                      
+            }
         }
 
         public void BulkInsert()
@@ -189,7 +190,7 @@ namespace WebApiObjects.Controllers
             {
 
                 string randomString = new string(Enumerable.Repeat(chars, 5)
-                  .Select(s => s[random.Next(s.Length)]).ToArray());
+                    .Select(s => s[random.Next(s.Length)]).ToArray());
 
                 Model temp = new Model
                 {
@@ -210,3 +211,4 @@ namespace WebApiObjects.Controllers
 
     }
 }
+

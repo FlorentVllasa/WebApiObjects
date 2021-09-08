@@ -26,22 +26,15 @@ namespace WebApiObjects.Migrations
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ParentModelID = table.Column<int>(type: "int", nullable: true),
                     ProjectIdID = table.Column<int>(type: "int", nullable: true),
-                    ModelID = table.Column<int>(type: "int", nullable: true)
+                    ParentId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Models", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_Models_Models_ModelID",
-                        column: x => x.ModelID,
-                        principalTable: "Models",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Models_Models_ParentModelID",
-                        column: x => x.ParentModelID,
+                        name: "FK_Models_Models_ParentId",
+                        column: x => x.ParentId,
                         principalTable: "Models",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
@@ -82,14 +75,9 @@ namespace WebApiObjects.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Models_ModelID",
+                name: "IX_Models_ParentId",
                 table: "Models",
-                column: "ModelID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Models_ParentModelID",
-                table: "Models",
-                column: "ParentModelID");
+                column: "ParentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Models_ProjectIdID",

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -11,12 +12,19 @@ namespace WebApiObjects.Models
     {
         [Key]
         public int ID { get; set; }
-        public string Name { get; set; }
-        public List<Model> SubModels { get; set; }
-        public Model ParentModel { get; set; }
-        public Project ProjectId { get; set; }
-        public List<Property> Properties { get; set; }
 
+        public string Name { get; set; }
+
+        public List<Model> SubModels { get; set; }
+
+        [JsonIgnore]
+        public Model ParentModel { get; set; }
+
+        public int? ParentId { get; set; }
+
+        public Project ProjectId { get; set; }
+
+        public List<Property> Properties { get; set; }
 
     }
 }

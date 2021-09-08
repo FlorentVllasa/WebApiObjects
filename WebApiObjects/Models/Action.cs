@@ -6,12 +6,17 @@ using System.Threading.Tasks;
 
 namespace WebApiObjects.Models
 {
-    public class Property
+    public class Action
     {
         [Key]
         public int ID { get; set; }
+
         public string Name { get; set; }
-        public string Type { get; set; }
+
+        public string Url { get; set; }
+
+        public string Method { get; set; }
+
         public Model ParentModel { get; set; }
 
         public int ParentId { get; set; }

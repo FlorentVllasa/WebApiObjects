@@ -35,20 +35,19 @@ namespace WebApiObjects
             services.AddCors(options =>
             {
                 options.AddPolicy(name: MyAllowSpecificOrigins,
-                                  builder =>
-                                  {
-                                      builder.WithOrigins("http://localhost:8080").AllowAnyMethod().AllowAnyHeader();
-                                  });
+                                    builder =>
+                                    {
+                                        builder.WithOrigins("http://localhost:8080").AllowAnyMethod().AllowAnyHeader();
+                                    });
             });
 
-            services.AddCors();
-            services.AddControllers().AddOData(opt => opt.Count()
-                                                    .Filter()
-                                                    .OrderBy()
-                                                    .Expand()
-                                                    .Select()
-                                                    .AddRouteComponents("v", GetEdmModel()));
-
+            //services.AddControllers().AddOData(opt => opt.Count()
+            //                                        .Filter()
+            //                                        .OrderBy()
+            //                                        .Expand()
+            //                                        .Select()
+            //                                        .AddRouteComponents("v", GetEdmModel()));
+            services.AddControllers();
             services.AddDbContext<WebDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("WebDbContext"))
                 //.UseLazyLoadingProxies()
@@ -99,7 +98,7 @@ namespace WebApiObjects
                 endpoints.MapControllerRoute(
                     name: "models",
                     pattern: "models",
-                    defaults: new { controller = "Models", action = "get2" }
+                    defaults: new { controller = "Models", action = "getmodels" }
                 );
 
                 endpoints.MapControllerRoute(

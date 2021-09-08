@@ -17,6 +17,7 @@ namespace WebApiObjects.Models
         public DbSet<Model> Models { get; set; }
         public DbSet<Property> Properties { get; set; }
         public DbSet<Project> Projects { get; set; }
+        public DbSet<Action> Actions { get; set; }
 
 
 
@@ -25,13 +26,21 @@ namespace WebApiObjects.Models
 
             modelBuilder.Entity<Model>()
                 .HasMany(m => m.SubModels)
-                .WithOne();
+                .WithOne(m => m.ParentModel)
+                .HasForeignKey(m => m.ParentId);
                                 
             modelBuilder.Entity<Property>()
                 .HasOne(p => p.ParentModel)
-                .WithMany();
+                .WithMany()
+                .HasForeignKey(p => p.ParentId);
 
             modelBuilder.Entity<Project>();
+
+            modelBuilder.Entity<Action>()
+                .HasOne(a => a.ParentModel)
+                .WithMany()
+                .HasForeignKey(a => a.ParentId);
+                
                 
                 
                 
