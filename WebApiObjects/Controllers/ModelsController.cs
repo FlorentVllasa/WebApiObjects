@@ -133,7 +133,6 @@ namespace WebApiObjects.Controllers
                 {
                     args.ErrorContext.Handled = true;
                 },
-
             };
 
             //var project = _dbContext.Projects.Include(p => p.Models).ThenInclude(m => m.Properties);

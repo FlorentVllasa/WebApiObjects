@@ -14,7 +14,7 @@ namespace WebApiObjects.Models
         public string Type { get; set; }
         public Model ParentModel { get; set; }
 
-        public int ParentId { get; set; }
+        //public int ParentId { get; set; }
 
     }
 }

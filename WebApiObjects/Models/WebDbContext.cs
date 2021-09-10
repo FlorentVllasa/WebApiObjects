@@ -19,8 +19,6 @@ namespace WebApiObjects.Models
         public DbSet<Project> Projects { get; set; }
         public DbSet<Action> Actions { get; set; }
 
-
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
@@ -28,11 +26,11 @@ namespace WebApiObjects.Models
                 .HasMany(m => m.SubModels)
                 .WithOne(m => m.ParentModel)
                 .HasForeignKey(m => m.ParentId);
-                                
+
             modelBuilder.Entity<Property>()
                 .HasOne(p => p.ParentModel)
-                .WithMany()
-                .HasForeignKey(p => p.ParentId);
+                .WithMany();
+                //.HasForeignKey(p => p.ParentId);
 
             modelBuilder.Entity<Project>();
 
