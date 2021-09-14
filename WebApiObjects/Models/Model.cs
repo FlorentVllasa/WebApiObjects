@@ -11,7 +11,7 @@ namespace WebApiObjects.Models
     public class Model
     {
         [Key]
-        public int ID { get; set; }
+        public Guid ID { get; set; }
 
         public string Name { get; set; }
 
@@ -20,7 +20,7 @@ namespace WebApiObjects.Models
         [JsonIgnore]
         public Model ParentModel { get; set; }
 
-        public int? ParentId { get; set; }
+        public Guid? ParentId { get; set; }
 
         public Project ProjectId { get; set; }
 

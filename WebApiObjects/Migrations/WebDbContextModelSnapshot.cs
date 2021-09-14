@@ -19,18 +19,42 @@ namespace WebApiObjects.Migrations
                 .HasAnnotation("ProductVersion", "5.0.8")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("WebApiObjects.Models.Model", b =>
+            modelBuilder.Entity("WebApiObjects.Models.Action", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<Guid>("ID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Method")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ParentId")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Url")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ParentId");
+
+                    b.ToTable("Actions");
+                });
+
+            modelBuilder.Entity("WebApiObjects.Models.Model", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int?>("ProjectIdID")
                         .HasColumnType("int");
@@ -61,30 +85,41 @@ namespace WebApiObjects.Migrations
 
             modelBuilder.Entity("WebApiObjects.Models.Property", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<Guid>("ID")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<int?>("ModelID")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("ModelID")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ParentModelID")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ParentId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Type")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 
                     b.HasIndex("ModelID");
 
-                    b.HasIndex("ParentModelID");
+                    b.HasIndex("ParentId");
 
                     b.ToTable("Properties");
+                });
+
+            modelBuilder.Entity("WebApiObjects.Models.Action", b =>
+                {
+                    b.HasOne("WebApiObjects.Models.Model", "ParentModel")
+                        .WithMany()
+                        .HasForeignKey("ParentId");
+
+                    b.Navigation("ParentModel");
                 });
 
             modelBuilder.Entity("WebApiObjects.Models.Model", b =>
@@ -110,7 +145,9 @@ namespace WebApiObjects.Migrations
 
                     b.HasOne("WebApiObjects.Models.Model", "ParentModel")
                         .WithMany()
-                        .HasForeignKey("ParentModelID");
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("ParentModel");
                 });

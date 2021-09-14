@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -9,12 +10,13 @@ namespace WebApiObjects.Models
     public class Property
     {
         [Key]
-        public int ID { get; set; }
+        public Guid ID { get; set; }
         public string Name { get; set; }
         public string Type { get; set; }
+        public string Value { get; set; }
+        [JsonIgnore]
         public Model ParentModel { get; set; }
-
-        //public int ParentId { get; set; }
+        public Guid ParentId { get; set; }
 
     }
 }

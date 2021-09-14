@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace WebApiObjects.Migrations
 {
@@ -23,11 +24,10 @@ namespace WebApiObjects.Migrations
                 name: "Models",
                 columns: table => new
                 {
-                    ID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ProjectIdID = table.Column<int>(type: "int", nullable: true),
-                    ParentId = table.Column<int>(type: "int", nullable: true)
+                    ParentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ProjectIdID = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -47,15 +47,36 @@ namespace WebApiObjects.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Actions",
+                columns: table => new
+                {
+                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Url = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Method = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ParentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Actions", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Actions_Models_ParentId",
+                        column: x => x.ParentId,
+                        principalTable: "Models",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Properties",
                 columns: table => new
                 {
-                    ID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ParentModelID = table.Column<int>(type: "int", nullable: true),
-                    ModelID = table.Column<int>(type: "int", nullable: true)
+                    Value = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ParentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ModelID = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -67,12 +88,17 @@ namespace WebApiObjects.Migrations
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Properties_Models_ParentModelID",
-                        column: x => x.ParentModelID,
+                        name: "FK_Properties_Models_ParentId",
+                        column: x => x.ParentId,
                         principalTable: "Models",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Actions_ParentId",
+                table: "Actions",
+                column: "ParentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Models_ParentId",
@@ -90,13 +116,16 @@ namespace WebApiObjects.Migrations
                 column: "ModelID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Properties_ParentModelID",
+                name: "IX_Properties_ParentId",
                 table: "Properties",
-                column: "ParentModelID");
+                column: "ParentId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Actions");
+
             migrationBuilder.DropTable(
                 name: "Properties");
 

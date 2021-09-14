@@ -62,6 +62,7 @@ namespace WebApiObjects.Controllers
             Property SalamiMeat = new Property
             {
                 Name = "Salami Meat",
+                ParentModel = Salami
             };
 
             properties.Add(SalamiMeat);
@@ -138,10 +139,11 @@ namespace WebApiObjects.Controllers
             //var project = _dbContext.Projects.Include(p => p.Models).ThenInclude(m => m.Properties);
             //return JsonConvert.SerializeObject(project, settings);
 
-            var pizza = _dbContext.Models.Where(m => m.Name.Equals(model)).First();
-            LoadRecursively(pizza);
+            var ToSearchModel = _dbContext.Models.Where(m => m.Name.Equals(model)).First();
+            //var pizza = _dbContext.Models.Where(m => m.Name.Equals(model)).First();
+            LoadRecursively(ToSearchModel);
 
-            return JsonConvert.SerializeObject(pizza, settings);
+            return JsonConvert.SerializeObject(ToSearchModel, settings);
         }
 
         public string CreateModel([FromBody] CreateModelData modelData)

@@ -29,8 +29,8 @@ namespace WebApiObjects.Models
 
             modelBuilder.Entity<Property>()
                 .HasOne(p => p.ParentModel)
-                .WithMany();
-                //.HasForeignKey(p => p.ParentId);
+                .WithMany()
+                .HasForeignKey(p => p.ParentId);
 
             modelBuilder.Entity<Project>();
 

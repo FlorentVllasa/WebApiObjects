@@ -9,7 +9,7 @@ namespace WebApiObjects.Models
     public class Action
     {
         [Key]
-        public int ID { get; set; }
+        public Guid ID { get; set; }
 
         public string Name { get; set; }
 
@@ -19,7 +19,7 @@ namespace WebApiObjects.Models
 
         public Model ParentModel { get; set; }
 
-        public int ParentId { get; set; }
+        public Guid? ParentId { get; set; }
 
     }
 }
