@@ -23,7 +23,7 @@ namespace WebApiObjects.Models
         {
 
             modelBuilder.Entity<Model>()
-                .HasMany(m => m.SubModels)
+                .HasMany(m => m.children)
                 .WithOne(m => m.ParentModel)
                 .HasForeignKey(m => m.ParentId);
 
@@ -37,11 +37,7 @@ namespace WebApiObjects.Models
             modelBuilder.Entity<Action>()
                 .HasOne(a => a.ParentModel)
                 .WithMany()
-                .HasForeignKey(a => a.ParentId);
-                
-                
-                
-                
+                .HasForeignKey(a => a.ParentId);  
         }
     }
 

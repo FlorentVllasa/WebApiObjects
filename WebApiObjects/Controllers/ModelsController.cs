@@ -53,8 +53,8 @@ namespace WebApiObjects.Controllers
 
             Model Salami = new Model
             {
-                Name = "Salami",
-                SubModels = null,
+                text = "Salami",
+                children = null,
                 Properties = properties,
                 ProjectId = TestProject
             };
@@ -62,36 +62,37 @@ namespace WebApiObjects.Controllers
             Property SalamiMeat = new Property
             {
                 Name = "Salami Meat",
-                ParentModel = Salami
+                ParentModel = Salami,
+                Type = "string"
             };
 
             properties.Add(SalamiMeat);
 
-            List<Model> CheeseModels = new List<Model>();
-
+            List<Property> CheeseProperties = new List<Property>();
+            
             Model Cheese = new Model
             {
-                Name = "Cheese",
-                SubModels = CheeseModels,
-                ProjectId = TestProject
+                text = "Cheese",
+                ProjectId = TestProject,
+                Properties = CheeseProperties
             };
 
-            Model CheeseShape = new Model
+            Property Shape = new Property
             {
-                Name = "CheeseShape",
-                SubModels = null,
-                ProjectId = TestProject
+                Name = "Shape",
+                ParentModel = Cheese,
+                Type = "string"
             };
 
-            Model CheeseOrigin = new Model
+            Property Origin = new Property
             {
-                Name = "CheeseOrigin",
-                SubModels = null,
-                ProjectId = TestProject
+                Name = "Origin",
+                ParentModel = Cheese,
+                Type = "string"
             };
 
-            CheeseModels.Add(CheeseShape);
-            CheeseModels.Add(CheeseOrigin);
+            CheeseProperties.Add(Shape);
+            CheeseProperties.Add(Origin);
 
             List<Model> Ingredients = new List<Model>();
             Ingredients.Add(Salami);
@@ -99,8 +100,8 @@ namespace WebApiObjects.Controllers
 
             Model Pizza = new Model
             {
-                Name = "pizza",
-                SubModels = Ingredients,
+                text = "pizza",
+                children = Ingredients,
                 ProjectId = TestProject
             };
 
@@ -108,20 +109,18 @@ namespace WebApiObjects.Controllers
             AllModels.Add(Pizza);
             AllModels.Add(Salami);
             AllModels.Add(Cheese);
-            AllModels.Add(CheeseOrigin);
-            AllModels.Add(CheeseShape);
 
             Pizza.ParentModel = null;
             Salami.ParentModel = Pizza;
             Cheese.ParentModel = Pizza;
-            CheeseOrigin.ParentModel = Cheese;
-            CheeseShape.ParentModel = Cheese;
 
             _dbContext.Add(TestProject);
             _dbContext.Add(Pizza);
             _dbContext.Add(Salami);
             _dbContext.Add(SalamiMeat);
             _dbContext.Add(Cheese);
+            _dbContext.Add(Shape);
+            _dbContext.Add(Origin);
             _dbContext.SaveChanges();
         }
 
@@ -139,7 +138,7 @@ namespace WebApiObjects.Controllers
             //var project = _dbContext.Projects.Include(p => p.Models).ThenInclude(m => m.Properties);
             //return JsonConvert.SerializeObject(project, settings);
 
-            var ToSearchModel = _dbContext.Models.Where(m => m.Name.Equals(model)).First();
+            var ToSearchModel = _dbContext.Models.Where(m => m.text.Equals(model)).First();
             //var pizza = _dbContext.Models.Where(m => m.Name.Equals(model)).First();
             LoadRecursively(ToSearchModel);
 
@@ -148,32 +147,37 @@ namespace WebApiObjects.Controllers
 
         public string CreateModel([FromBody] CreateModelData modelData)
         {
-            var ToAddProject = _dbContext.Projects.Where(p => p.ID == modelData.ProjectId).First();
 
-            Model NewModel = new Model()
+            if(modelData.ParentModel == null)
             {
-                Name = modelData.ModelName,
-                ProjectId = ToAddProject
-            };
+                var ToAddProject = _dbContext.Projects.Where(p => p.ID == modelData.ProjectId).First();
 
-            //if (ToAddProject != null)
-            //{
-            //    ToAddProject.Models.Add(NewModel);
-            //}
-            _dbContext.Models.Add(NewModel);
-            _dbContext.SaveChanges();
+                Model NewModel = new Model()
+                {
+                    text = modelData.ModelName,
+                    ProjectId = ToAddProject
+                };
 
-            return JsonConvert.SerializeObject(NewModel);
+                //if (ToAddProject != null)
+                //{
+                //    ToAddProject.Models.Add(NewModel);
+                //}
+                _dbContext.Models.Add(NewModel);
+                _dbContext.SaveChanges();
+
+                return JsonConvert.SerializeObject(NewModel);
+            }
+            return "";
         }
 
         public void LoadRecursively(Model model)
         {
-            _dbContext.Entry(model).Collection(m => m.SubModels).Load();
+            _dbContext.Entry(model).Collection(m => m.children).Load();
             _dbContext.Entry(model).Collection(m => m.Properties).Load();
             _dbContext.Entry(model).Reference(m => m.ProjectId).Load();
             //_dbContext.Entry(model).Reference(m => m.ParentModel).Load();
 
-            foreach (var SubModel in model.SubModels)
+            foreach (var SubModel in model.children)
             {
                 _dbContext.Entry(SubModel).Collection(m => m.Properties).Load();
                 _dbContext.Entry(model).Reference(m => m.ProjectId).Load();
@@ -195,7 +199,7 @@ namespace WebApiObjects.Controllers
 
                 Model temp = new Model
                 {
-                    Name = randomString,
+                    text = randomString,
                 };
                 insertList.Add(temp);
             }
