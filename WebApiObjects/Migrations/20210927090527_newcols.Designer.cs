@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApiObjects.Models;
 
 namespace WebApiObjects.Migrations
 {
     [DbContext(typeof(WebDbContext))]
-    partial class WebDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210927090527_newcols")]
+    partial class newcols
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -81,7 +83,7 @@ namespace WebApiObjects.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("ModelTypes");
+                    b.ToTable("ModelType");
                 });
 
             modelBuilder.Entity("WebApiObjects.Models.Project", b =>
@@ -141,9 +143,6 @@ namespace WebApiObjects.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ParentModelTypeId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Typ")
                         .HasColumnType("nvarchar(max)");
 
@@ -151,9 +150,7 @@ namespace WebApiObjects.Migrations
 
                     b.HasIndex("ModelTypeID");
 
-                    b.HasIndex("ParentModelTypeId");
-
-                    b.ToTable("Types");
+                    b.ToTable("Type");
                 });
 
             modelBuilder.Entity("WebApiObjects.Models.Action", b =>
@@ -204,14 +201,6 @@ namespace WebApiObjects.Migrations
                     b.HasOne("WebApiObjects.Models.ModelType", null)
                         .WithMany("ModelTypes")
                         .HasForeignKey("ModelTypeID");
-
-                    b.HasOne("WebApiObjects.Models.ModelType", "ParentModelType")
-                        .WithMany()
-                        .HasForeignKey("ParentModelTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ParentModelType");
                 });
 
             modelBuilder.Entity("WebApiObjects.Models.Model", b =>

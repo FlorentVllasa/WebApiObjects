@@ -114,6 +114,24 @@ namespace WebApiObjects.Controllers
             Salami.ParentModel = Pizza;
             Cheese.ParentModel = Pizza;
 
+            List<Models.Type> TypeList = new List<Models.Type>();
+           
+            ModelType ModelType = new ModelType
+            {
+                Models = AllModels,
+                ModelTypes = TypeList
+            };
+
+            Models.Type PizzaType = new Models.Type
+            {
+                Name = "SalamiPizza",
+                Typ = "pizza",
+                ParentModelType = ModelType
+
+            };
+
+            TypeList.Add(PizzaType);
+
             _dbContext.Add(TestProject);
             _dbContext.Add(Pizza);
             _dbContext.Add(Salami);
@@ -121,6 +139,8 @@ namespace WebApiObjects.Controllers
             _dbContext.Add(Cheese);
             _dbContext.Add(Shape);
             _dbContext.Add(Origin);
+            _dbContext.Add(PizzaType);
+            _dbContext.Add(ModelType);
             _dbContext.SaveChanges();
         }
 
@@ -183,6 +203,20 @@ namespace WebApiObjects.Controllers
                 _dbContext.Entry(model).Reference(m => m.ProjectId).Load();
                 //_dbContext.Entry(model).Reference(m => m.ParentModel).Load();
                 LoadRecursively(SubModel);
+            }
+        }
+
+        public void LoadRecursivelyTypes(ModelType ModelType)
+        {
+            _dbContext.Entry(ModelType).Collection(mt => mt.ModelTypes).Load();
+            _dbContext.Entry(ModelType).Collection(mt => mt.Models).Load();
+
+            foreach (var Model in ModelType.Models)
+            {
+                foreach (var SubModel in Model.children)
+                {
+                    LoadRecursively(SubModel);
+                }
             }
         }
 

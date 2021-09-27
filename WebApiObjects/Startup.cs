@@ -113,6 +113,12 @@ namespace WebApiObjects
                     defaults: new { controller = "Models", action = "retrievemodels" }
                 );
 
+                endpoints.MapControllerRoute(
+                    name: "types",
+                    pattern: "types/retrieve/{type}",
+                    defaults: new { controller = "ModelTypes", action = "retrievetype" }
+                );
+
             });
         }
 

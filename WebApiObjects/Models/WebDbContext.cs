@@ -18,9 +18,24 @@ namespace WebApiObjects.Models
         public DbSet<Property> Properties { get; set; }
         public DbSet<Project> Projects { get; set; }
         public DbSet<Action> Actions { get; set; }
+        public DbSet<ModelType> ModelTypes { get; set; }
+        public DbSet<Type> Types { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            modelBuilder.Entity<ModelType>()
+                .HasMany(mt => mt.Models)
+                .WithOne();
+
+            modelBuilder.Entity<ModelType>()
+                .HasMany(mt => mt.ModelTypes)
+                .WithOne();
+
+            modelBuilder.Entity<Type>()
+                .HasOne(t => t.ParentModelType)
+                .WithMany()
+                .HasForeignKey(t => t.ParentModelTypeId);
 
             modelBuilder.Entity<Model>()
                 .HasMany(m => m.children)
