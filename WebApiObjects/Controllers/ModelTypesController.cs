@@ -34,6 +34,19 @@ namespace WebApiObjects.Controllers
             return JsonConvert.SerializeObject(ToSearchModelType, settings);
         }
 
+        public void LoadRecursivelyTypes(ModelType ModelType)
+        {
+            _dbContext.Entry(ModelType).Collection(mt => mt.ModelTypes).Load();
+            _dbContext.Entry(ModelType).Collection(mt => mt.Models).Load();
+
+            foreach (var Model in ModelType.Models)
+            {
+                foreach (var SubModel in Model.children)
+                {
+                    LoadRecursively(SubModel);
+                }
+            }
+        }
         public void LoadRecursively(Model model)
         {
             _dbContext.Entry(model).Collection(m => m.children).Load();
@@ -47,20 +60,6 @@ namespace WebApiObjects.Controllers
                 _dbContext.Entry(model).Reference(m => m.ProjectId).Load();
                 //_dbContext.Entry(model).Reference(m => m.ParentModel).Load();
                 LoadRecursively(SubModel);
-            }
-        }
-
-        public void LoadRecursivelyTypes(ModelType ModelType)
-        {
-            _dbContext.Entry(ModelType).Collection(mt => mt.ModelTypes).Load();
-            _dbContext.Entry(ModelType).Collection(mt => mt.Models).Load();
-
-            foreach (var Model in ModelType.Models)
-            {
-                foreach (var SubModel in Model.children)
-                {
-                    LoadRecursively(SubModel);
-                }
             }
         }
 

@@ -72,7 +72,7 @@ namespace WebApiObjects.Controllers
             
             Model Cheese = new Model
             {
-                text = "Cheese",
+                text = "cheese",
                 ProjectId = TestProject,
                 Properties = CheeseProperties
             };
@@ -130,7 +130,16 @@ namespace WebApiObjects.Controllers
 
             };
 
+            Models.Type CheeseType = new Models.Type
+            {
+                Name = "Cheese Variety",
+                Typ = "cheese[]",
+                ParentModelType = ModelType
+
+            };
+
             TypeList.Add(PizzaType);
+            TypeList.Add(CheeseType);
 
             _dbContext.Add(TestProject);
             _dbContext.Add(Pizza);
@@ -140,6 +149,7 @@ namespace WebApiObjects.Controllers
             _dbContext.Add(Shape);
             _dbContext.Add(Origin);
             _dbContext.Add(PizzaType);
+            _dbContext.Add(CheeseType);
             _dbContext.Add(ModelType);
             _dbContext.SaveChanges();
         }
@@ -168,26 +178,35 @@ namespace WebApiObjects.Controllers
         public string CreateModel([FromBody] CreateModelData modelData)
         {
 
-            if(modelData.ParentModel == null)
-            {
-                var ToAddProject = _dbContext.Projects.Where(p => p.ID == modelData.ProjectId).First();
+            var ToAddProject = _dbContext.Projects.Where(p => p.ID == modelData.ProjectId).First();
+
+            if (modelData.ParentModel == null)
+            { 
 
                 Model NewModel = new Model()
                 {
                     text = modelData.ModelName,
-                    ProjectId = ToAddProject
+                    ProjectId = ToAddProject,
+                    ParentModel = null
                 };
 
-                //if (ToAddProject != null)
-                //{
-                //    ToAddProject.Models.Add(NewModel);
-                //}
                 _dbContext.Models.Add(NewModel);
                 _dbContext.SaveChanges();
 
                 return JsonConvert.SerializeObject(NewModel);
             }
-            return "";
+
+            Model NewModelWithParent = new Model()
+            {
+                text = modelData.ModelName,
+                ProjectId = ToAddProject,
+                ParentModel = modelData.ParentModel
+            };
+
+            _dbContext.Models.Add(NewModelWithParent);
+            _dbContext.SaveChanges();
+
+            return JsonConvert.SerializeObject(modelData.ParentModel);
         }
 
         public void LoadRecursively(Model model)
