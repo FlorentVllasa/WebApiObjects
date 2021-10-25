@@ -10,8 +10,8 @@ using WebApiObjects.Models;
 namespace WebApiObjects.Migrations
 {
     [DbContext(typeof(WebDbContext))]
-    [Migration("20210927090527_newcols")]
-    partial class newcols
+    [Migration("20211025122805_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -30,6 +30,9 @@ namespace WebApiObjects.Migrations
                     b.Property<string>("Method")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("ModelID")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -40,6 +43,8 @@ namespace WebApiObjects.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("ModelID");
 
                     b.HasIndex("ParentId");
 
@@ -83,7 +88,7 @@ namespace WebApiObjects.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("ModelType");
+                    b.ToTable("ModelTypes");
                 });
 
             modelBuilder.Entity("WebApiObjects.Models.Project", b =>
@@ -143,6 +148,9 @@ namespace WebApiObjects.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("ParentModelTypeId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Typ")
                         .HasColumnType("nvarchar(max)");
 
@@ -150,11 +158,17 @@ namespace WebApiObjects.Migrations
 
                     b.HasIndex("ModelTypeID");
 
-                    b.ToTable("Type");
+                    b.HasIndex("ParentModelTypeId");
+
+                    b.ToTable("Types");
                 });
 
             modelBuilder.Entity("WebApiObjects.Models.Action", b =>
                 {
+                    b.HasOne("WebApiObjects.Models.Model", null)
+                        .WithMany("Actions")
+                        .HasForeignKey("ModelID");
+
                     b.HasOne("WebApiObjects.Models.Model", "ParentModel")
                         .WithMany()
                         .HasForeignKey("ParentId");
@@ -199,12 +213,22 @@ namespace WebApiObjects.Migrations
             modelBuilder.Entity("WebApiObjects.Models.Type", b =>
                 {
                     b.HasOne("WebApiObjects.Models.ModelType", null)
-                        .WithMany("ModelTypes")
+                        .WithMany("DataVariables")
                         .HasForeignKey("ModelTypeID");
+
+                    b.HasOne("WebApiObjects.Models.ModelType", "ParentModelType")
+                        .WithMany()
+                        .HasForeignKey("ParentModelTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ParentModelType");
                 });
 
             modelBuilder.Entity("WebApiObjects.Models.Model", b =>
                 {
+                    b.Navigation("Actions");
+
                     b.Navigation("children");
 
                     b.Navigation("Properties");
@@ -212,9 +236,9 @@ namespace WebApiObjects.Migrations
 
             modelBuilder.Entity("WebApiObjects.Models.ModelType", b =>
                 {
-                    b.Navigation("Models");
+                    b.Navigation("DataVariables");
 
-                    b.Navigation("ModelTypes");
+                    b.Navigation("Models");
                 });
 #pragma warning restore 612, 618
         }

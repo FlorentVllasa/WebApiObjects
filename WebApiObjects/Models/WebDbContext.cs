@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,7 @@ namespace WebApiObjects.Models
         public DbSet<Action> Actions { get; set; }
         public DbSet<ModelType> ModelTypes { get; set; }
         public DbSet<Type> Types { get; set; }
+        public DbSet<Tag> Tags { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -29,7 +31,7 @@ namespace WebApiObjects.Models
                 .WithOne();
 
             modelBuilder.Entity<ModelType>()
-                .HasMany(mt => mt.ModelTypes)
+                .HasMany(mt => mt.DataVariables)
                 .WithOne();
 
             modelBuilder.Entity<Type>()
@@ -52,7 +54,17 @@ namespace WebApiObjects.Models
             modelBuilder.Entity<Action>()
                 .HasOne(a => a.ParentModel)
                 .WithMany()
-                .HasForeignKey(a => a.ParentId);  
+                .HasForeignKey(a => a.ParentId);
+
+            modelBuilder.Entity<Tag>()
+                .HasOne(t => t.ParentModel)
+                .WithMany()
+                .HasForeignKey(t => t.ParentModelID);
+
+            modelBuilder.Entity<Tag>()
+                .Property(t => t.Tags)
+                .HasConversion(t => JsonConvert.SerializeObject(t), t => JsonConvert.DeserializeObject<List<string>>(t));
+
         }
     }
 

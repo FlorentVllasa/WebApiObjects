@@ -13,7 +13,5 @@ namespace WebApiObjects.Models
         public ModelType ParentModelType { get; set; }
         public Guid ParentModelTypeId { get; set; }
 
-
-
     }
 }

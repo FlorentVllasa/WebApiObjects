@@ -36,7 +36,7 @@ namespace WebApiObjects.Controllers
 
         public void LoadRecursivelyTypes(ModelType ModelType)
         {
-            _dbContext.Entry(ModelType).Collection(mt => mt.ModelTypes).Load();
+            _dbContext.Entry(ModelType).Collection(mt => mt.DataVariables).Load();
             _dbContext.Entry(ModelType).Collection(mt => mt.Models).Load();
 
             foreach (var Model in ModelType.Models)

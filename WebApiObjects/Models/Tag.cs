@@ -5,11 +5,12 @@ using System.Threading.Tasks;
 
 namespace WebApiObjects.Models
 {
-    public class ModelType
+    public class Tag
     {
         public Guid ID { get; set; }
-        public List<Type> DataVariables { get; set; }
-        public List<Model> Models { get; set; }
+        public List<string> Tags { get; set; }
+        public Model ParentModel { get; set; }
+        public Guid ParentModelID { get; set; }
 
     }
 }

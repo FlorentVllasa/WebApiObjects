@@ -42,6 +42,19 @@ namespace WebApiObjects.Controllers
 
         public void AddSampleData()
         {
+            Models.Action SomeAction = new Models.Action
+            {
+                Method = "GET",
+                Name = "Get Something",
+                Url = "some/service",
+            };
+
+            Models.Action SomeAction2 = new Models.Action
+            {
+                Method = "GET",
+                Name = "Get Something",
+                Url = "some/service",
+            };
 
             List<Property> properties = new List<Property>();
 
@@ -69,13 +82,17 @@ namespace WebApiObjects.Controllers
             properties.Add(SalamiMeat);
 
             List<Property> CheeseProperties = new List<Property>();
-            
+            List<Models.Action> CheesePizzaList = new List<Models.Action>();
+
+            CheesePizzaList.Add(SomeAction2);
             Model Cheese = new Model
             {
                 text = "cheese",
                 ProjectId = TestProject,
-                Properties = CheeseProperties
+                Properties = CheeseProperties,
+                Actions = CheesePizzaList
             };
+            SomeAction2.ParentModel = Cheese;
 
             Property Shape = new Property
             {
@@ -98,12 +115,18 @@ namespace WebApiObjects.Controllers
             Ingredients.Add(Salami);
             Ingredients.Add(Cheese);
 
+            List<Models.Action> ActionPizzaList = new List<Models.Action>();
+            
+            ActionPizzaList.Add(SomeAction);
+
             Model Pizza = new Model
             {
                 text = "pizza",
                 children = Ingredients,
-                ProjectId = TestProject
+                ProjectId = TestProject,
+                Actions = ActionPizzaList
             };
+            SomeAction.ParentModel = Pizza;
 
             List<Model> AllModels = new List<Model>();
             AllModels.Add(Pizza);
@@ -119,7 +142,7 @@ namespace WebApiObjects.Controllers
             ModelType ModelType = new ModelType
             {
                 Models = AllModels,
-                ModelTypes = TypeList
+                DataVariables = TypeList
             };
 
             Models.Type PizzaType = new Models.Type
@@ -151,6 +174,8 @@ namespace WebApiObjects.Controllers
             _dbContext.Add(PizzaType);
             _dbContext.Add(CheeseType);
             _dbContext.Add(ModelType);
+            _dbContext.Add(SomeAction);
+            _dbContext.Add(SomeAction2);
             _dbContext.SaveChanges();
         }
 
@@ -214,12 +239,14 @@ namespace WebApiObjects.Controllers
             _dbContext.Entry(model).Collection(m => m.children).Load();
             _dbContext.Entry(model).Collection(m => m.Properties).Load();
             _dbContext.Entry(model).Reference(m => m.ProjectId).Load();
+            _dbContext.Entry(model).Collection(m => m.Actions).Load();
             //_dbContext.Entry(model).Reference(m => m.ParentModel).Load();
 
             foreach (var SubModel in model.children)
             {
                 _dbContext.Entry(SubModel).Collection(m => m.Properties).Load();
                 _dbContext.Entry(model).Reference(m => m.ProjectId).Load();
+                _dbContext.Entry(model).Collection(m => m.Actions).Load();
                 //_dbContext.Entry(model).Reference(m => m.ParentModel).Load();
                 LoadRecursively(SubModel);
             }
@@ -227,7 +254,7 @@ namespace WebApiObjects.Controllers
 
         public void LoadRecursivelyTypes(ModelType ModelType)
         {
-            _dbContext.Entry(ModelType).Collection(mt => mt.ModelTypes).Load();
+            _dbContext.Entry(ModelType).Collection(mt => mt.DataVariables).Load();
             _dbContext.Entry(ModelType).Collection(mt => mt.Models).Load();
 
             foreach (var Model in ModelType.Models)
