@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApiObjects.Models;
 
 namespace WebApiObjects.Migrations
 {
     [DbContext(typeof(WebDbContext))]
-    partial class WebDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211026062015_tagsmodel")]
+    partial class tagsmodel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -64,6 +66,9 @@ namespace WebApiObjects.Migrations
                     b.Property<int?>("ProjectIdID")
                         .HasColumnType("int");
 
+                    b.Property<Guid?>("TagID")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("text")
                         .HasColumnType("nvarchar(max)");
 
@@ -74,6 +79,8 @@ namespace WebApiObjects.Migrations
                     b.HasIndex("ParentId");
 
                     b.HasIndex("ProjectIdID");
+
+                    b.HasIndex("TagID");
 
                     b.ToTable("Models");
                 });
@@ -140,9 +147,6 @@ namespace WebApiObjects.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("ModelID")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("ParentModelID")
                         .HasColumnType("uniqueidentifier");
 
@@ -150,8 +154,6 @@ namespace WebApiObjects.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
-
-                    b.HasIndex("ModelID");
 
                     b.HasIndex("ParentModelID");
 
@@ -212,9 +214,15 @@ namespace WebApiObjects.Migrations
                         .WithMany()
                         .HasForeignKey("ProjectIdID");
 
+                    b.HasOne("WebApiObjects.Models.Tag", "Tag")
+                        .WithMany()
+                        .HasForeignKey("TagID");
+
                     b.Navigation("ParentModel");
 
                     b.Navigation("ProjectId");
+
+                    b.Navigation("Tag");
                 });
 
             modelBuilder.Entity("WebApiObjects.Models.Property", b =>
@@ -234,10 +242,6 @@ namespace WebApiObjects.Migrations
 
             modelBuilder.Entity("WebApiObjects.Models.Tag", b =>
                 {
-                    b.HasOne("WebApiObjects.Models.Model", null)
-                        .WithMany("Tag")
-                        .HasForeignKey("ModelID");
-
                     b.HasOne("WebApiObjects.Models.Model", "ParentModel")
                         .WithMany()
                         .HasForeignKey("ParentModelID")
@@ -269,8 +273,6 @@ namespace WebApiObjects.Migrations
                     b.Navigation("children");
 
                     b.Navigation("Properties");
-
-                    b.Navigation("Tag");
                 });
 
             modelBuilder.Entity("WebApiObjects.Models.ModelType", b =>

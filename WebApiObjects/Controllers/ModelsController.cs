@@ -83,6 +83,16 @@ namespace WebApiObjects.Controllers
 
             List<Property> CheeseProperties = new List<Property>();
             List<Models.Action> CheesePizzaList = new List<Models.Action>();
+            List<string> TagStrings = new List<string>();
+            TagStrings.Add("PizzaTag");
+
+            Tag tags = new Tag
+            {
+                Tags = TagStrings,
+            };
+
+            List<Tag> tagList = new List<Tag>();
+            tagList.Add(tags);
 
             CheesePizzaList.Add(SomeAction2);
             Model Cheese = new Model
@@ -90,9 +100,11 @@ namespace WebApiObjects.Controllers
                 text = "cheese",
                 ProjectId = TestProject,
                 Properties = CheeseProperties,
-                Actions = CheesePizzaList
+                Actions = CheesePizzaList,
+                Tags = tagList
             };
             SomeAction2.ParentModel = Cheese;
+            tags.ParentModel = Cheese;
 
             Property Shape = new Property
             {
@@ -158,7 +170,6 @@ namespace WebApiObjects.Controllers
                 Name = "Cheese Variety",
                 Typ = "cheese[]",
                 ParentModelType = ModelType
-
             };
 
             TypeList.Add(PizzaType);
@@ -176,6 +187,7 @@ namespace WebApiObjects.Controllers
             _dbContext.Add(ModelType);
             _dbContext.Add(SomeAction);
             _dbContext.Add(SomeAction2);
+            _dbContext.Add(tags);
             _dbContext.SaveChanges();
         }
 
@@ -240,6 +252,7 @@ namespace WebApiObjects.Controllers
             _dbContext.Entry(model).Collection(m => m.Properties).Load();
             _dbContext.Entry(model).Reference(m => m.ProjectId).Load();
             _dbContext.Entry(model).Collection(m => m.Actions).Load();
+            _dbContext.Entry(model).Collection(m => m.Tags).Load();
             //_dbContext.Entry(model).Reference(m => m.ParentModel).Load();
 
             foreach (var SubModel in model.children)
@@ -247,6 +260,7 @@ namespace WebApiObjects.Controllers
                 _dbContext.Entry(SubModel).Collection(m => m.Properties).Load();
                 _dbContext.Entry(model).Reference(m => m.ProjectId).Load();
                 _dbContext.Entry(model).Collection(m => m.Actions).Load();
+                _dbContext.Entry(model).Collection(m => m.Tags).Load();
                 //_dbContext.Entry(model).Reference(m => m.ParentModel).Load();
                 LoadRecursively(SubModel);
             }

@@ -27,6 +27,6 @@ namespace WebApiObjects.Models
         public List<Property> Properties { get; set; }
 
         public List<Action> Actions { get; set; }
-
+        public List<Tag> Tags { get; set; }
     }
 }

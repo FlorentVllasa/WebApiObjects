@@ -52,12 +52,16 @@ namespace WebApiObjects.Controllers
             _dbContext.Entry(model).Collection(m => m.children).Load();
             _dbContext.Entry(model).Collection(m => m.Properties).Load();
             _dbContext.Entry(model).Reference(m => m.ProjectId).Load();
+            _dbContext.Entry(model).Collection(m => m.Actions).Load();
+            _dbContext.Entry(model).Collection(m => m.Tags).Load();
             //_dbContext.Entry(model).Reference(m => m.ParentModel).Load();
 
             foreach (var SubModel in model.children)
             {
                 _dbContext.Entry(SubModel).Collection(m => m.Properties).Load();
                 _dbContext.Entry(model).Reference(m => m.ProjectId).Load();
+                _dbContext.Entry(model).Collection(m => m.Actions).Load();
+                _dbContext.Entry(model).Collection(m => m.Tags).Load();
                 //_dbContext.Entry(model).Reference(m => m.ParentModel).Load();
                 LoadRecursively(SubModel);
             }
