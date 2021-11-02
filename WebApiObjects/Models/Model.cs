@@ -13,9 +13,9 @@ namespace WebApiObjects.Models
         [Key]
         public Guid ID { get; set; }
 
-        public string text { get; set; }
+        public string Name { get; set; }
 
-        public List<Model> children { get; set; }
+        public List<Model> SubModels { get; set; }
 
         [JsonIgnore]
         public Model ParentModel { get; set; }

@@ -39,7 +39,7 @@ namespace WebApiObjects.Models
                 .HasForeignKey(t => t.ParentModelTypeId);
 
             modelBuilder.Entity<Model>()
-                .HasMany(m => m.children)
+                .HasMany(m => m.SubModels)
                 .WithOne(m => m.ParentModel)
                 .HasForeignKey(m => m.ParentId);
 

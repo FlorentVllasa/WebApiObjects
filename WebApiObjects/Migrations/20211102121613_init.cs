@@ -147,6 +147,32 @@ namespace WebApiObjects.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Tags",
+                columns: table => new
+                {
+                    ID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Tags = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ParentModelID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ModelID = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tags", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Tags_Models_ModelID",
+                        column: x => x.ModelID,
+                        principalTable: "Models",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Tags_Models_ParentModelID",
+                        column: x => x.ParentModelID,
+                        principalTable: "Models",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Actions_ModelID",
                 table: "Actions",
@@ -183,6 +209,16 @@ namespace WebApiObjects.Migrations
                 column: "ParentId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Tags_ModelID",
+                table: "Tags",
+                column: "ModelID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tags_ParentModelID",
+                table: "Tags",
+                column: "ParentModelID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Types_ModelTypeID",
                 table: "Types",
                 column: "ModelTypeID");
@@ -200,6 +236,9 @@ namespace WebApiObjects.Migrations
 
             migrationBuilder.DropTable(
                 name: "Properties");
+
+            migrationBuilder.DropTable(
+                name: "Tags");
 
             migrationBuilder.DropTable(
                 name: "Types");

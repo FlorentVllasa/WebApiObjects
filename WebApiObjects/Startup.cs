@@ -125,7 +125,7 @@ namespace WebApiObjects
         private static IEdmModel GetEdmModel()
         {
             var builder = new ODataConventionModelBuilder();
-            builder.EntitySet<Model>("Models").EntityType.HasMany(m => m.children);
+            builder.EntitySet<Model>("Models").EntityType.HasMany(m => m.SubModels);
             builder.EntitySet<Property>("Propterties");//.EntityType.HasKey(prop => prop.ParentModel);
             return builder.GetEdmModel();
         }

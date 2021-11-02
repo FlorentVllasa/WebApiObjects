@@ -66,8 +66,8 @@ namespace WebApiObjects.Controllers
 
             Model Salami = new Model
             {
-                text = "Salami",
-                children = null,
+                Name = "Salami",
+                SubModels = null,
                 Properties = properties,
                 ProjectId = TestProject
             };
@@ -97,7 +97,7 @@ namespace WebApiObjects.Controllers
             CheesePizzaList.Add(SomeAction2);
             Model Cheese = new Model
             {
-                text = "cheese",
+                Name = "cheese",
                 ProjectId = TestProject,
                 Properties = CheeseProperties,
                 Actions = CheesePizzaList,
@@ -133,8 +133,8 @@ namespace WebApiObjects.Controllers
 
             Model Pizza = new Model
             {
-                text = "pizza",
-                children = Ingredients,
+                Name = "pizza",
+                SubModels = Ingredients,
                 ProjectId = TestProject,
                 Actions = ActionPizzaList,
             };
@@ -202,7 +202,7 @@ namespace WebApiObjects.Controllers
                 },
             };
 
-            var ToSearchModel = _dbContext.Models.Where(m => m.text.Equals(model)).First();
+            var ToSearchModel = _dbContext.Models.Where(m => m.Name.Equals(model)).First();
             LoadRecursively(ToSearchModel);
 
             return JsonConvert.SerializeObject(ToSearchModel, settings);
@@ -218,7 +218,7 @@ namespace WebApiObjects.Controllers
 
                 Model NewModel = new Model()
                 {
-                    text = modelData.ModelName,
+                    Name = modelData.ModelName,
                     ProjectId = ToAddProject,
                     ParentModel = null
                 };
@@ -231,7 +231,7 @@ namespace WebApiObjects.Controllers
 
             Model NewModelWithParent = new Model()
             {
-                text = modelData.ModelName,
+                Name = modelData.ModelName,
                 ProjectId = ToAddProject,
                 ParentModel = modelData.ParentModel
             };
@@ -244,14 +244,14 @@ namespace WebApiObjects.Controllers
 
         public void LoadRecursively(Model model)
         {
-            _dbContext.Entry(model).Collection(m => m.children).Load();
+            _dbContext.Entry(model).Collection(m => m.SubModels).Load();
             _dbContext.Entry(model).Collection(m => m.Properties).Load();
             _dbContext.Entry(model).Reference(m => m.ProjectId).Load();
             _dbContext.Entry(model).Collection(m => m.Actions).Load();
             _dbContext.Entry(model).Collection(m => m.Tags).Load();
             //_dbContext.Entry(model).Reference(m => m.ParentModel).Load();
 
-            foreach (var SubModel in model.children)
+            foreach (var SubModel in model.SubModels)
             {
                 _dbContext.Entry(SubModel).Collection(m => m.Properties).Load();
                 _dbContext.Entry(model).Reference(m => m.ProjectId).Load();
@@ -269,7 +269,7 @@ namespace WebApiObjects.Controllers
 
             foreach (var Model in ModelType.Models)
             {
-                foreach (var SubModel in Model.children)
+                foreach (var SubModel in Model.SubModels)
                 {
                     LoadRecursively(SubModel);
                 }
@@ -289,7 +289,7 @@ namespace WebApiObjects.Controllers
 
                 Model temp = new Model
                 {
-                    text = randomString,
+                    Name = randomString,
                 };
                 insertList.Add(temp);
             }

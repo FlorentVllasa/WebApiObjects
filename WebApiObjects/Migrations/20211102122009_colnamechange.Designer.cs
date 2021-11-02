@@ -10,8 +10,8 @@ using WebApiObjects.Models;
 namespace WebApiObjects.Migrations
 {
     [DbContext(typeof(WebDbContext))]
-    [Migration("20211026064645_modelchange")]
-    partial class modelchange
+    [Migration("20211102122009_colnamechange")]
+    partial class colnamechange
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -60,14 +60,14 @@ namespace WebApiObjects.Migrations
                     b.Property<Guid?>("ModelTypeID")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid?>("ParentId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int?>("ProjectIdID")
                         .HasColumnType("int");
-
-                    b.Property<string>("text")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 
@@ -207,7 +207,7 @@ namespace WebApiObjects.Migrations
                         .HasForeignKey("ModelTypeID");
 
                     b.HasOne("WebApiObjects.Models.Model", "ParentModel")
-                        .WithMany("children")
+                        .WithMany("SubModels")
                         .HasForeignKey("ParentId");
 
                     b.HasOne("WebApiObjects.Models.Project", "ProjectId")
@@ -237,7 +237,7 @@ namespace WebApiObjects.Migrations
             modelBuilder.Entity("WebApiObjects.Models.Tag", b =>
                 {
                     b.HasOne("WebApiObjects.Models.Model", null)
-                        .WithMany("Tag")
+                        .WithMany("Tags")
                         .HasForeignKey("ModelID");
 
                     b.HasOne("WebApiObjects.Models.Model", "ParentModel")
@@ -268,11 +268,11 @@ namespace WebApiObjects.Migrations
                 {
                     b.Navigation("Actions");
 
-                    b.Navigation("children");
-
                     b.Navigation("Properties");
 
-                    b.Navigation("Tag");
+                    b.Navigation("SubModels");
+
+                    b.Navigation("Tags");
                 });
 
             modelBuilder.Entity("WebApiObjects.Models.ModelType", b =>

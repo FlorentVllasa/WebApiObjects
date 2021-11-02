@@ -41,7 +41,7 @@ namespace WebApiObjects.Controllers
 
             foreach (var Model in ModelType.Models)
             {
-                foreach (var SubModel in Model.children)
+                foreach (var SubModel in Model.SubModels)
                 {
                     LoadRecursively(SubModel);
                 }
@@ -49,14 +49,14 @@ namespace WebApiObjects.Controllers
         }
         public void LoadRecursively(Model model)
         {
-            _dbContext.Entry(model).Collection(m => m.children).Load();
+            _dbContext.Entry(model).Collection(m => m.SubModels).Load();
             _dbContext.Entry(model).Collection(m => m.Properties).Load();
             _dbContext.Entry(model).Reference(m => m.ProjectId).Load();
             _dbContext.Entry(model).Collection(m => m.Actions).Load();
             _dbContext.Entry(model).Collection(m => m.Tags).Load();
             //_dbContext.Entry(model).Reference(m => m.ParentModel).Load();
 
-            foreach (var SubModel in model.children)
+            foreach (var SubModel in model.SubModels)
             {
                 _dbContext.Entry(SubModel).Collection(m => m.Properties).Load();
                 _dbContext.Entry(model).Reference(m => m.ProjectId).Load();
