@@ -9,7 +9,6 @@ namespace WebApiObjects.Models
 {
     public class WebDbContext : DbContext
     {
-
         public WebDbContext(DbContextOptions<WebDbContext> options) : base(options)
         {
             

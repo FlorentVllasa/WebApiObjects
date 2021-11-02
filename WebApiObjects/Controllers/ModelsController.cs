@@ -136,7 +136,7 @@ namespace WebApiObjects.Controllers
                 text = "pizza",
                 children = Ingredients,
                 ProjectId = TestProject,
-                Actions = ActionPizzaList
+                Actions = ActionPizzaList,
             };
             SomeAction.ParentModel = Pizza;
 
@@ -202,11 +202,7 @@ namespace WebApiObjects.Controllers
                 },
             };
 
-            //var project = _dbContext.Projects.Include(p => p.Models).ThenInclude(m => m.Properties);
-            //return JsonConvert.SerializeObject(project, settings);
-
             var ToSearchModel = _dbContext.Models.Where(m => m.text.Equals(model)).First();
-            //var pizza = _dbContext.Models.Where(m => m.Name.Equals(model)).First();
             LoadRecursively(ToSearchModel);
 
             return JsonConvert.SerializeObject(ToSearchModel, settings);
